@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.summer.expenses.viewmodels.CreateWalletViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activities.CreateWallet">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:elevation="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbarCreateWallet"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        app:layout_scrollFlags="enterAlways"
+                        app:navigationIcon="@drawable/abc_vector_test"
+                        app:popupTheme="@style/AppTheme.PopupOverlay"
+                        app:title="New Wallet" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/wallet_profile"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginBottom="10dp"
+                            app:myimage="@{viewModel.nameicon}"/>
+
+                        <com.summer.expenses.customviews.text.MaterialEditText
+                            android:id="@+id/name_edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:layout_marginTop="@dimen/material_activity_body_edit_text_margin_top"
+                            android:hint="@string/name"
+                            android:inputType="textNoSuggestions"
+                            android:text="@={viewModel.nameEdittext}"
+                            app:met_mode="floatingLabel" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <com.summer.expenses.customviews.ThemedMaterialEditText
+                android:id="@+id/initial_amount_edit"
+                android:text="@={viewModel.initialAmountEdittext}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_activity_body_edit_text_margin_top"
+                android:hint="@string/initial_amount"
+                android:inputType="numberDecimal"
+                app:met_leftIcon="@drawable/ic_mode_edit_black_24dp"
+                app:met_mode="floatingLabel" />
+
+            <com.summer.expenses.customviews.ThemedMaterialEditText
+
+                android:text="@={viewModel.noteEdittext}"
+                android:id="@+id/note_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/note"
+                android:inputType="textMultiLine"
+                app:met_leftIcon="@drawable/ic_content_paste_black_24dp"
+                app:met_mode="floatingLabel" />
+
+            <com.summer.expenses.customviews.ThemedCheckBox
+                android:id="@+id/not_exclude_total_check_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_activity_body_check_box_start_end_margin"
+                android:layout_marginTop="@dimen/material_activity_body_check_box_top_bottom_margin"
+                android:layout_marginRight="@dimen/material_activity_body_check_box_start_end_margin"
+                android:layout_marginBottom="@dimen/material_activity_body_check_box_top_bottom_margin"
+                android:checked="true"
+                android:paddingStart="@dimen/material_activity_body_check_box_start_padding"
+                android:text="@string/show_this_wallet_in_total_count"
+                tools:ignore="RtlSymmetry" />
+        </LinearLayout>
+
+    </ScrollView>
+</layout>

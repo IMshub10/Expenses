@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Expenses</string>
+    <string name="show_this_wallet_in_total_count">Show this Wallet in total count</string>
+    <string name="note">Note</string>
+    <string name="initial_amount">Initial Amount</string>
+    <string name="name">Name</string>
+</resources>

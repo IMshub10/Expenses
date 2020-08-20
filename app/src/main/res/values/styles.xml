@@ -1,0 +1,26 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="MikePenz.DayNight" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        ...
+        <item name="materialDrawerStyle">@style/Widget.MaterialDrawerStyle</item>
+        <item name="materialDrawerHeaderStyle">@style/Widget.MaterialDrawerHeaderStyle</item>
+        ...
+    </style>
+    <style name="Widget.MaterialDrawerStyleCustom" parent="Widget.MaterialDrawerStyle">
+        <!-- MaterialDrawer specific values -->
+        <item name="materialDrawerBackground">#303030</item>
+        <item name="materialDrawerPrimaryText">?android:textColorPrimary</item>
+        <item name="materialDrawerSecondaryText">?android:textColorSecondary</item>
+        <item name="materialDrawerDividerColor">#1FFFFFFF</item>
+        <item name="materialDrawerSelectedBackgroundColor">#1FF1433C</item>
+    </style>
+</resources>
