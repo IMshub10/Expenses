@@ -16,20 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.summer.expenses.customviews.text;
-
-import androidx.annotation.NonNull;
+package com.summer.expenses.customviews.text
 
 /**
  * Created by andrea on 30/01/18.
  */
-public interface Validator {
-
-    @NonNull
-    String getErrorMessage();
-
-    boolean isValid(@NonNull CharSequence charSequence);
-
-    boolean autoValidate();
+interface Validator {
+    val errorMessage: String
+    fun isValid(charSequence: CharSequence): Boolean
+    fun autoValidate(): Boolean
 }

@@ -16,64 +16,73 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.summer.expenses.customviews
 
-package com.summer.expenses.customviews;
-
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.util.AttributeSet;
-
-import com.summer.expenses.R;
-import com.summer.expenses.customviews.text.MaterialEditText;
-
+import android.content.Context
+import android.util.AttributeSet
+import com.summer.expenses.R
+import com.summer.expenses.customviews.BackgroundColor
+import com.summer.expenses.customviews.BackgroundColor.Companion.fromValue
+import com.summer.expenses.customviews.BackgroundColor.Companion.getValue
+import com.summer.expenses.customviews.ThemeEngine.ThemeConsumer
+import com.summer.expenses.customviews.text.MaterialEditText
 
 /**
  * Created by andrea on 20/08/18.
  */
-public class ThemedMaterialEditText extends MaterialEditText implements ThemeEngine.ThemeConsumer {
+class ThemedMaterialEditText : MaterialEditText, ThemeConsumer {
+    private var mBackgroundColor: BackgroundColor? = null
 
-    private BackgroundColor mBackgroundColor;
-
-    public ThemedMaterialEditText(Context context) {
-        super(context);
-        initialize(context, null, 0);
+    constructor(context: Context) : super(context) {
+        initialize(context, null, 0)
     }
 
-    public ThemedMaterialEditText(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initialize(context, attrs, 0);
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        initialize(context, attrs, 0)
     }
 
-    public ThemedMaterialEditText(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        initialize(context, attrs, defStyleAttr);
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        initialize(context, attrs, defStyleAttr)
     }
 
-    private void initialize(Context context, AttributeSet attrs, int defStyleAttr) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ThemedMaterialEditText, defStyleAttr, 0);
+    private fun initialize(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
+        val typedArray = context.obtainStyledAttributes(
+            attrs,
+            R.styleable.ThemedMaterialEditText,
+            defStyleAttr,
+            0
+        )
         try {
-            mBackgroundColor = BackgroundColor.fromValue(typedArray.getInt(R.styleable.ThemedMaterialEditText_theme_backgroundColor, BackgroundColor.getValue(BackgroundColor.COLOR_WINDOW_FOREGROUND)));
-        } catch (Exception e) {
-            e.printStackTrace();
+            mBackgroundColor = fromValue(
+                typedArray.getInt(
+                    R.styleable.ThemedMaterialEditText_theme_backgroundColor,
+                    getValue(BackgroundColor.COLOR_WINDOW_FOREGROUND)
+                )
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
         } finally {
-            typedArray.recycle();
+            typedArray.recycle()
         }
     }
 
-    @Override
-    public void onApplyTheme(ITheme theme) {
+    override fun onApplyTheme(theme: ITheme?) {
         if (mBackgroundColor != null) {
-            int backgroundColor = mBackgroundColor.getColor(theme);
-            setTextColor(theme.getBestTextColor(backgroundColor));
-            setFloatingLabelColorNormal(theme.getBestHintColor(backgroundColor));
-            setHintTextColor(theme.getBestHintColor(backgroundColor));
-            setFloatingLabelColorFocused(theme.getColorAccent());
-            setLeftIconColorNormal(theme.getBestIconColor(backgroundColor));
-            setLeftIconColorFocused(theme.getColorAccent());
-            setBottomLineColorNormal(theme.getBestIconColor(backgroundColor));
-            setBottomLineColorFocused(theme.getColorAccent());
-            setBottomLineColorError(theme.getErrorColor());
-            TintHelper.setCursorTint(this, theme.getColorAccent());
+            val backgroundColor = mBackgroundColor!!.getColor(theme!!)
+            setTextColor(theme.getBestTextColor(backgroundColor))
+            setFloatingLabelColorNormal(theme.getBestHintColor(backgroundColor))
+            setHintTextColor(theme.getBestHintColor(backgroundColor))
+            setFloatingLabelColorFocused(theme.colorAccent)
+            setLeftIconColorNormal(theme.getBestIconColor(backgroundColor))
+            setLeftIconColorFocused(theme.colorAccent)
+            setBottomLineColorNormal(theme.getBestIconColor(backgroundColor))
+            setBottomLineColorFocused(theme.colorAccent)
+            setBottomLineColorError(theme.errorColor)
+            TintHelper.setCursorTint(this, theme.colorAccent)
         }
     }
 }

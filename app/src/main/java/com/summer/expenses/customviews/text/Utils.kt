@@ -16,43 +16,48 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.summer.expenses.customviews.text
 
-package com.summer.expenses.customviews.text;
-
-import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.TypedValue;
-import android.view.View;
-
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
+import android.os.Build
+import android.util.TypedValue
+import android.view.View
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 
 /**
  * Created by andrea on 30/01/18.
  */
-/*package-local*/ class Utils {
-
-    /*package-local*/ static float getPixels(int dp, Resources resources) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
+/*package-local*/
+internal object Utils {
+    /*package-local*/
+    fun getPixels(dp: Int, resources: Resources): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            resources.displayMetrics
+        )
     }
 
-    /*package-local*/ static boolean isRtl(Resources resources) {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && resources.getConfiguration().getLayoutDirection() == Configuration.SCREENLAYOUT_LAYOUTDIR_RTL;
+    /*package-local*/
+    fun isRtl(resources: Resources): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && resources.configuration.layoutDirection == Configuration.SCREENLAYOUT_LAYOUTDIR_RTL
     }
 
-    /*package-local*/ static void setBackgroundCompat(@NonNull View view, Drawable drawable) {
+    /*package-local*/
+    fun setBackgroundCompat(view: View, drawable: Drawable?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            view.setBackground(drawable);
+            view.background = drawable
         } else {
-            view.setBackgroundDrawable(drawable);
+            view.setBackgroundDrawable(drawable)
         }
     }
 
-    /*package-local*/ static Drawable getDrawableCompat(Context context, @DrawableRes int drawable) {
-        return ContextCompat.getDrawable(context, drawable);
+    /*package-local*/
+    fun getDrawableCompat(context: Context?, @DrawableRes drawable: Int): Drawable? {
+        return ContextCompat.getDrawable(context!!, drawable)
     }
 }

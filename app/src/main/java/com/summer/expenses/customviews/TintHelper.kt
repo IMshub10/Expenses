@@ -16,245 +16,244 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.summer.expenses.customviews
 
-package com.summer.expenses.customviews;
-
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.RippleDrawable;
-import android.os.Build;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
-
-import androidx.annotation.CheckResult;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-
-
-import com.summer.expenses.R;
-import com.summer.expenses.utils.Utils;
-
-import java.lang.reflect.Field;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.RippleDrawable
+import android.os.Build
+import android.widget.*
+import androidx.annotation.CheckResult
+import androidx.annotation.ColorInt
+import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import com.summer.expenses.R
+import com.summer.expenses.utils.Utils
 
 /**
  * Created by andrea on 11/04/18.
  */
-/*package-local*/ class TintHelper {
-
-    private static final int COLOR_BUTTON_DISABLED_LIGHT = Color.parseColor("#1F000000");
-    private static final int COLOR_BUTTON_DISABLED_DARK = Color.parseColor("#1F000000");
-
-    private static final int COLOR_CONTROL_DISABLED_DARK = Color.parseColor("#43000000");
-    private static final int COLOR_CONTROL_DISABLED_LIGHT = Color.parseColor("#4DFFFFFF");
-    private static final int COLOR_CONTROL_NORMAL_DARK = Color.parseColor("#B3FFFFFF");
-    private static final int COLOR_CONTROL_NORMAL_LIGHT = Color.parseColor("#8A000000");
-
-    private static final int COLOR_SWITCH_THUMB_DISABLED_LIGHT = Color.parseColor("#FFBDBDBD");
-    private static final int COLOR_SWITCH_THUMB_DISABLED_DARK = Color.parseColor("#FF424242");
-    private static final int COLOR_SWITCH_THUMB_NORMAL_LIGHT = Color.parseColor("#FFFAFAFA");
-    private static final int COLOR_SWITCH_THUMB_NORMAL_DARK = Color.parseColor("#FFBDBDBD");
-    private static final int COLOR_SWITCH_TRACK_DISABLED_LIGHT = Color.parseColor("#1F000000");
-    private static final int COLOR_SWITCH_TRACK_DISABLED_DARK = Color.parseColor("#1AFFFFFF");
-    private static final int COLOR_SWITCH_TRACK_NORMAL_LIGHT = Color.parseColor("#43000000");
-    private static final int COLOR_SWITCH_TRACK_NORMAL_DARK = Color.parseColor("#4DFFFFFF");
+/*package-local*/
+internal object TintHelper {
+    private val COLOR_BUTTON_DISABLED_LIGHT = Color.parseColor("#1F000000")
+    private val COLOR_BUTTON_DISABLED_DARK = Color.parseColor("#1F000000")
+    private val COLOR_CONTROL_DISABLED_DARK = Color.parseColor("#43000000")
+    private val COLOR_CONTROL_DISABLED_LIGHT = Color.parseColor("#4DFFFFFF")
+    private val COLOR_CONTROL_NORMAL_DARK = Color.parseColor("#B3FFFFFF")
+    private val COLOR_CONTROL_NORMAL_LIGHT = Color.parseColor("#8A000000")
+    private val COLOR_SWITCH_THUMB_DISABLED_LIGHT = Color.parseColor("#FFBDBDBD")
+    private val COLOR_SWITCH_THUMB_DISABLED_DARK = Color.parseColor("#FF424242")
+    private val COLOR_SWITCH_THUMB_NORMAL_LIGHT = Color.parseColor("#FFFAFAFA")
+    private val COLOR_SWITCH_THUMB_NORMAL_DARK = Color.parseColor("#FFBDBDBD")
+    private val COLOR_SWITCH_TRACK_DISABLED_LIGHT = Color.parseColor("#1F000000")
+    private val COLOR_SWITCH_TRACK_DISABLED_DARK = Color.parseColor("#1AFFFFFF")
+    private val COLOR_SWITCH_TRACK_NORMAL_LIGHT = Color.parseColor("#43000000")
+    private val COLOR_SWITCH_TRACK_NORMAL_DARK = Color.parseColor("#4DFFFFFF")
 
     // This returns a NEW Drawable because of the mutate() call. The mutate() call is necessary because Drawables with the same resource have shared states otherwise.
     @CheckResult
-    @Nullable
-    /*package-local*/ static Drawable createTintedDrawable(@Nullable Drawable drawable, @ColorInt int color) {
-        if (drawable == null) {
-            return null;
-        }
-        drawable = DrawableCompat.wrap(drawable.mutate());
-        DrawableCompat.setTintMode(drawable, PorterDuff.Mode.SRC_IN);
-        DrawableCompat.setTint(drawable, color);
-        return drawable;
+    fun createTintedDrawable(drawable: Drawable?, @ColorInt color: Int): Drawable? {
+        var drawable: Drawable? = drawable ?: return null
+        drawable = DrawableCompat.wrap(drawable!!.mutate())
+        DrawableCompat.setTintMode(drawable, PorterDuff.Mode.SRC_IN)
+        DrawableCompat.setTint(drawable, color)
+        return drawable
     }
 
     @CheckResult
-    @Nullable
-    /*package-local*/ static Drawable createTintedDrawable(@Nullable Drawable drawable, @NonNull ColorStateList colorStateList) {
-        if (drawable == null) {
-            return null;
-        }
-        drawable = DrawableCompat.wrap(drawable.mutate());
-        DrawableCompat.setTintList(drawable, colorStateList);
-        return drawable;
+    fun createTintedDrawable(drawable: Drawable?, colorStateList: ColorStateList): Drawable? {
+        var drawable: Drawable? = drawable ?: return null
+        drawable = DrawableCompat.wrap(drawable!!.mutate())
+        DrawableCompat.setTintList(drawable, colorStateList)
+        return drawable
     }
 
-    private static Drawable modifySwitchDrawable(@NonNull Context context, @NonNull Drawable from, @ColorInt int tint, boolean thumb, boolean useDarker) {
+    private fun modifySwitchDrawable(
+        context: Context,
+        from: Drawable,
+        @ColorInt tint: Int,
+        thumb: Boolean,
+        useDarker: Boolean
+    ): Drawable? {
+        var tint = tint
         if (useDarker) {
-            tint = Util.shiftColor(tint, 1.1f);
+            tint = Util.shiftColor(tint, 1.1f)
         }
-        tint = Util.adjustAlpha(tint, thumb ? 1.0f : 0.5f);
-        int disabled;
-        int normal;
+        tint = Util.adjustAlpha(tint, if (thumb) 1.0f else 0.5f)
+        val disabled: Int
+        val normal: Int
         if (thumb) {
-            disabled = useDarker ? COLOR_SWITCH_THUMB_DISABLED_DARK : COLOR_SWITCH_THUMB_DISABLED_LIGHT;
-            normal = useDarker ? COLOR_SWITCH_THUMB_NORMAL_DARK : COLOR_SWITCH_THUMB_NORMAL_LIGHT;
+            disabled =
+                if (useDarker) COLOR_SWITCH_THUMB_DISABLED_DARK else COLOR_SWITCH_THUMB_DISABLED_LIGHT
+            normal =
+                if (useDarker) COLOR_SWITCH_THUMB_NORMAL_DARK else COLOR_SWITCH_THUMB_NORMAL_LIGHT
         } else {
-            disabled = useDarker ? COLOR_SWITCH_TRACK_DISABLED_DARK : COLOR_SWITCH_TRACK_DISABLED_LIGHT;
-            normal = useDarker ? COLOR_SWITCH_TRACK_NORMAL_DARK : COLOR_SWITCH_TRACK_NORMAL_LIGHT;
+            disabled =
+                if (useDarker) COLOR_SWITCH_TRACK_DISABLED_DARK else COLOR_SWITCH_TRACK_DISABLED_LIGHT
+            normal =
+                if (useDarker) COLOR_SWITCH_TRACK_NORMAL_DARK else COLOR_SWITCH_TRACK_NORMAL_LIGHT
         }
-        ColorStateList stateList = new ColorStateList(new int[][] {
-                    new int[] {-android.R.attr.state_enabled},
-                    new int[] {android.R.attr.state_enabled, -android.R.attr.state_activated, -android.R.attr.state_checked},
-                    new int[] {android.R.attr.state_enabled, android.R.attr.state_activated},
-                    new int[] {android.R.attr.state_enabled, android.R.attr.state_checked}
-                }, new int[] {disabled, normal, tint, tint}
-        );
-        return createTintedDrawable(from, stateList);
+        val stateList = ColorStateList(
+            arrayOf(
+                intArrayOf(-android.R.attr.state_enabled),
+                intArrayOf(
+                    android.R.attr.state_enabled,
+                    -android.R.attr.state_activated,
+                    -android.R.attr.state_checked
+                ),
+                intArrayOf(android.R.attr.state_enabled, android.R.attr.state_activated),
+                intArrayOf(android.R.attr.state_enabled, android.R.attr.state_checked)
+            ), intArrayOf(disabled, normal, tint, tint)
+        )
+        return createTintedDrawable(from, stateList)
     }
 
-    /*package-local*/ static void applyTint(Button button, @ColorInt int color, @ColorInt int rippleColor, boolean useDarker) {
-        int disabled = useDarker ? COLOR_BUTTON_DISABLED_DARK : COLOR_BUTTON_DISABLED_LIGHT;
-        int pressed = Util.shiftColor(color, useDarker ? 0.9f : 1.1f);
-        int activated = Util.shiftColor(color, useDarker ? 1.1f : 0.9f);
-        ColorStateList colorStateList = new ColorStateList(
-                new int[][] {
-                        new int[] {-android.R.attr.state_enabled}, new int[] {android.R.attr.state_enabled}
-                },
-                new int[] {disabled, color}
-        );
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && button.getBackground() instanceof RippleDrawable) {
-            RippleDrawable rippleDrawable = (RippleDrawable) button.getBackground();
-            rippleDrawable.setColor(ColorStateList.valueOf(rippleColor));
+    /*package-local*/
+    fun applyTint(
+        button: Button,
+        @ColorInt color: Int,
+        @ColorInt rippleColor: Int,
+        useDarker: Boolean
+    ) {
+        val disabled = if (useDarker) COLOR_BUTTON_DISABLED_DARK else COLOR_BUTTON_DISABLED_LIGHT
+        val pressed = Util.shiftColor(color, if (useDarker) 0.9f else 1.1f)
+        val activated = Util.shiftColor(color, if (useDarker) 1.1f else 0.9f)
+        val colorStateList = ColorStateList(
+            arrayOf(
+                intArrayOf(-android.R.attr.state_enabled),
+                intArrayOf(android.R.attr.state_enabled)
+            ), intArrayOf(disabled, color)
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && button.background is RippleDrawable) {
+            val rippleDrawable = button.background as RippleDrawable
+            rippleDrawable.setColor(ColorStateList.valueOf(rippleColor))
         }
-        Drawable drawable = button.getBackground();
+        var drawable = button.background
         if (drawable != null) {
-            drawable = createTintedDrawable(drawable, colorStateList);
-            Utils.setBackgroundCompat(button, drawable);
+            drawable = createTintedDrawable(drawable, colorStateList)
+            Utils.setBackgroundCompat(button, drawable)
         }
     }
 
-    /*package-local*/ static void applyTint(CheckBox checkBox, @ColorInt int color, boolean useDarker) {
-        Context context = checkBox.getContext();
-        ColorStateList stateList = new ColorStateList(new int[][] {
-                new int[] {-android.R.attr.state_enabled},
-                new int[] {android.R.attr.state_enabled, -android.R.attr.state_checked},
-                new int[] {android.R.attr.state_enabled, android.R.attr.state_checked}
-        },
-                new int[] {
-                        Util.stripAlpha(useDarker ? COLOR_CONTROL_DISABLED_DARK : COLOR_CONTROL_DISABLED_LIGHT),
-                        useDarker ? COLOR_CONTROL_NORMAL_DARK : COLOR_CONTROL_NORMAL_LIGHT,
-                        color
-                }
-        );
+    /*package-local*/
+    fun applyTint(checkBox: CheckBox, @ColorInt color: Int, useDarker: Boolean) {
+        val context = checkBox.context
+        val stateList = ColorStateList(
+            arrayOf(
+                intArrayOf(-android.R.attr.state_enabled),
+                intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_checked),
+                intArrayOf(android.R.attr.state_enabled, android.R.attr.state_checked)
+            ), intArrayOf(
+                Util.stripAlpha(if (useDarker) COLOR_CONTROL_DISABLED_DARK else COLOR_CONTROL_DISABLED_LIGHT),
+                if (useDarker) COLOR_CONTROL_NORMAL_DARK else COLOR_CONTROL_NORMAL_LIGHT,
+                color
+            )
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            checkBox.setButtonTintList(stateList);
+            checkBox.buttonTintList = stateList
         } else {
-            @SuppressLint("PrivateResource")
-            int resource = R.drawable.abc_btn_radio_material;
-            Drawable drawable = ContextCompat.getDrawable(context, resource);
-            drawable = createTintedDrawable(drawable, stateList);
-            checkBox.setButtonDrawable(drawable);
+            @SuppressLint("PrivateResource") val resource = R.drawable.abc_btn_radio_material
+            var drawable = ContextCompat.getDrawable(context, resource)
+            drawable = createTintedDrawable(drawable, stateList)
+            checkBox.buttonDrawable = drawable
         }
     }
 
-    /*package-local*/ static void applyTint(RadioButton radioButton, @ColorInt int color, boolean useDarker) {
-        Context context = radioButton.getContext();
-        ColorStateList stateList = new ColorStateList(new int[][] {
-                                        new int[] {-android.R.attr.state_enabled},
-                                        new int[] {android.R.attr.state_enabled, -android.R.attr.state_checked},
-                                        new int[] {android.R.attr.state_enabled, android.R.attr.state_checked}
-                                    },
-                                    new int[] {
-                                        Util.stripAlpha(useDarker ? COLOR_CONTROL_DISABLED_DARK : COLOR_CONTROL_DISABLED_LIGHT),
-                                        useDarker ? COLOR_CONTROL_NORMAL_DARK : COLOR_CONTROL_NORMAL_LIGHT,
-                                        color
-                                    }
-        );
+    /*package-local*/
+    fun applyTint(radioButton: RadioButton, @ColorInt color: Int, useDarker: Boolean) {
+        val context = radioButton.context
+        val stateList = ColorStateList(
+            arrayOf(
+                intArrayOf(-android.R.attr.state_enabled),
+                intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_checked),
+                intArrayOf(android.R.attr.state_enabled, android.R.attr.state_checked)
+            ), intArrayOf(
+                Util.stripAlpha(if (useDarker) COLOR_CONTROL_DISABLED_DARK else COLOR_CONTROL_DISABLED_LIGHT),
+                if (useDarker) COLOR_CONTROL_NORMAL_DARK else COLOR_CONTROL_NORMAL_LIGHT,
+                color
+            )
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            radioButton.setButtonTintList(stateList);
+            radioButton.buttonTintList = stateList
         } else {
-            @SuppressLint("PrivateResource")
-            int resource = R.drawable.abc_btn_radio_material;
-            Drawable drawable = ContextCompat.getDrawable(context, resource);
-            drawable = createTintedDrawable(drawable, stateList);
-            radioButton.setButtonDrawable(drawable);
+            @SuppressLint("PrivateResource") val resource = R.drawable.abc_btn_radio_material
+            var drawable = ContextCompat.getDrawable(context, resource)
+            drawable = createTintedDrawable(drawable, stateList)
+            radioButton.buttonDrawable = drawable
         }
     }
 
-    /*package-local*/ static void applyTint(SwitchCompat switchCompat, @ColorInt int color, boolean useDarker) {
-        if (switchCompat.getTrackDrawable() != null) {
-            switchCompat.setTrackDrawable(
-                    modifySwitchDrawable(
-                            switchCompat.getContext(),
-                            switchCompat.getTrackDrawable(),
-                            color,
-                            false,
-                            useDarker
-                    )
-            );
+    /*package-local*/
+    fun applyTint(switchCompat: SwitchCompat, @ColorInt color: Int, useDarker: Boolean) {
+        if (switchCompat.trackDrawable != null) {
+            switchCompat.trackDrawable = modifySwitchDrawable(
+                switchCompat.context,
+                switchCompat.trackDrawable,
+                color,
+                false,
+                useDarker
+            )
         }
-        if (switchCompat.getThumbDrawable() != null) {
-            switchCompat.setThumbDrawable(
-                    modifySwitchDrawable(
-                            switchCompat.getContext(),
-                            switchCompat.getThumbDrawable(),
-                            color,
-                            true,
-                            useDarker
-                    )
-            );
+        if (switchCompat.thumbDrawable != null) {
+            switchCompat.thumbDrawable = modifySwitchDrawable(
+                switchCompat.context,
+                switchCompat.thumbDrawable,
+                color,
+                true,
+                useDarker
+            )
         }
     }
 
-    /*package-local*/ static void applyTint(@NonNull SeekBar seekBar, @ColorInt int color, boolean useDarker) {
-        ColorStateList colorStateList = new ColorStateList(
-                new int[][] {
-                        new int[] {-android.R.attr.state_enabled},
-                        new int[] {android.R.attr.state_enabled}
-                },
-                new int[] {
-                        useDarker ? COLOR_CONTROL_DISABLED_DARK : COLOR_CONTROL_DISABLED_LIGHT,
-                        color
-                }
-        );
+    /*package-local*/
+    fun applyTint(seekBar: SeekBar, @ColorInt color: Int, useDarker: Boolean) {
+        val colorStateList = ColorStateList(
+            arrayOf(
+                intArrayOf(-android.R.attr.state_enabled),
+                intArrayOf(android.R.attr.state_enabled)
+            ), intArrayOf(
+                if (useDarker) COLOR_CONTROL_DISABLED_DARK else COLOR_CONTROL_DISABLED_LIGHT,
+                color
+            )
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            seekBar.setThumbTintList(colorStateList);
-            seekBar.setProgressTintList(colorStateList);
+            seekBar.thumbTintList = colorStateList
+            seekBar.progressTintList = colorStateList
         } else {
-            Drawable progressDrawable = createTintedDrawable(seekBar.getProgressDrawable(), colorStateList);
-            seekBar.setProgressDrawable(progressDrawable);
+            val progressDrawable = createTintedDrawable(seekBar.progressDrawable, colorStateList)
+            seekBar.progressDrawable = progressDrawable
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                Drawable thumbDrawable = createTintedDrawable(seekBar.getThumb(), colorStateList);
-                seekBar.setThumb(thumbDrawable);
+                val thumbDrawable = createTintedDrawable(seekBar.thumb, colorStateList)
+                seekBar.thumb = thumbDrawable
             }
         }
     }
 
-    /*package-local*/ static void setCursorTint(@NonNull EditText editText, @ColorInt int color) {
+    /*package-local*/
+    fun setCursorTint(editText: EditText, @ColorInt color: Int) {
         try {
-            Field fCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
-            fCursorDrawableRes.setAccessible(true);
-            int mCursorDrawableRes = fCursorDrawableRes.getInt(editText);
-            Field fEditor = TextView.class.getDeclaredField("mEditor");
-            fEditor.setAccessible(true);
-            Object editor = fEditor.get(editText);
-            Class<?> clazz = editor.getClass();
-            Field fCursorDrawable = clazz.getDeclaredField("mCursorDrawable");
-            fCursorDrawable.setAccessible(true);
-            Drawable[] drawables = new Drawable[2];
-            drawables[0] = ContextCompat.getDrawable(editText.getContext(), mCursorDrawableRes);
-            drawables[0] = createTintedDrawable(drawables[0], color);
-            drawables[1] = ContextCompat.getDrawable(editText.getContext(), mCursorDrawableRes);
-            drawables[1] = createTintedDrawable(drawables[1], color);
-            fCursorDrawable.set(editor, drawables);
-        } catch (Exception e) {
-            e.printStackTrace();
+            val fCursorDrawableRes = TextView::class.java.getDeclaredField("mCursorDrawableRes")
+            fCursorDrawableRes.isAccessible = true
+            val mCursorDrawableRes = fCursorDrawableRes.getInt(editText)
+            val fEditor = TextView::class.java.getDeclaredField("mEditor")
+            fEditor.isAccessible = true
+            val editor = fEditor[editText]
+            val clazz: Class<*> = editor.javaClass
+            val fCursorDrawable = clazz.getDeclaredField("mCursorDrawable")
+            fCursorDrawable.isAccessible = true
+            val drawables = arrayOfNulls<Drawable>(2)
+            drawables[0] = ContextCompat.getDrawable(editText.context, mCursorDrawableRes)
+            drawables[0] = createTintedDrawable(drawables[0], color)
+            drawables[1] = ContextCompat.getDrawable(editText.context, mCursorDrawableRes)
+            drawables[1] = createTintedDrawable(drawables[1], color)
+            fCursorDrawable[editor] = drawables
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

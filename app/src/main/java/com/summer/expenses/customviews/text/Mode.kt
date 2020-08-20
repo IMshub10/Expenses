@@ -16,33 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.summer.expenses.customviews.text;
+package com.summer.expenses.customviews.text
 
 /**
  * Created by andrea on 01/05/18.
  */
-public enum Mode {
-
+enum class Mode(  /*package-local*/
+    var mMode: Int
+) {
     STANDARD(0), FLOATING_LABEL(1);
 
-    /*package-local*/ int mMode;
+    val mode: Mode?
+        get() = getMode(mMode)
 
-    Mode(int mode) {
-        mMode = mode;
-    }
-
-    public Mode getMode() {
-        return getMode(mMode);
-    }
-
-    public static Mode getMode(int value) {
-        switch (value) {
-            case 0:
-                return STANDARD;
-            case 1:
-                return FLOATING_LABEL;
+    companion object {
+        fun getMode(value: Int): Mode? {
+            when (value) {
+                0 -> return STANDARD
+                1 -> return FLOATING_LABEL
+            }
+            return null
         }
-        return null;
     }
 }

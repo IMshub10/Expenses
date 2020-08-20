@@ -16,23 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.summer.expenses.customviews
 
-package com.summer.expenses.customviews;
-
-import android.os.Parcelable;
+import android.os.Parcelable
 
 /**
  * Created by andre on 21/03/2018.
  */
-public interface IFile extends Parcelable {
-
-    String getName();
-
-    String getExtension();
-
-    boolean isDirectory();
-
-    long getSize();
-
-    String encodeToString();
+interface IFile : Parcelable {
+    val name: String?
+    val extension: String?
+    val isDirectory: Boolean
+    val size: Long
+    fun encodeToString(): String?
 }

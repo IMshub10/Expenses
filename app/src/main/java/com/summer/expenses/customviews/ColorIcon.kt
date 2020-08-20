@@ -16,144 +16,113 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.summer.expenses.customviews
 
-package com.summer.expenses.customviews;
-
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.widget.ImageView;
-
-
-import com.summer.expenses.utils.Utils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.content.Context
+import android.graphics.drawable.Drawable
+import android.os.Parcel
+import android.os.Parcelable
+import android.widget.ImageView
+import com.summer.expenses.utils.Utils
+import org.json.JSONException
+import org.json.JSONObject
 
 /**
  * Created by andrea on 23/01/18.
  */
-public class ColorIcon extends Icon {
+class ColorIcon(name: String) : Icon() {
+    private val mName: String
+    var backgroundColor = 0
 
-    private static final String COLOR = "color";
-    private static final String NAME = "name";
-
-
-    private final String mName;
-    int backgroundColor;
-
-
-    public ColorIcon(String name) {
-        mName = name.substring(0,1).toUpperCase();
+    @JvmName("getType1")
+    fun getType(): Type {
+        return Type.COLOR
     }
 
 
-    @Override
-    public Type getType() {
-        return Type.COLOR;
-    }
-
-    @Override
-    protected void writeJSON(JSONObject jsonObject) throws JSONException {
-    }
-
-    @Override
-    public boolean apply(ImageView imageView) {
-        Drawable drawable = getDrawable();
-        imageView.setImageDrawable(drawable);
-        return true;
+    @JvmName("apply1")
+    fun apply(imageView: ImageView): Boolean {
+        val drawable = drawable
+        imageView!!.setImageDrawable(drawable)
+        return true
     }
 
 
-    @Override
-    public Drawable getDrawable(Context context) {
-        return getDrawable();
-    }
 
-    public Drawable getDrawable() {
-        backgroundColor = setBackgroundColor(mName.toLowerCase());
-        return TextDrawable.builder()
+    val drawable: Drawable
+        get() {
+            backgroundColor = setBackgroundColor(mName.toLowerCase())
+            return TextDrawable.builder()
                 .beginConfig()
                 .width(80)
                 .height(80)
                 .textColor(Utils.getBestColor(backgroundColor))
                 .endConfig()
-                .buildRound(mName, backgroundColor);
+                .buildRound(mName, backgroundColor)
+        }
+    override val type: Type
+        get() = TODO("Not yet implemented")
+
+    override fun writeJSON(jsonObject: JSONObject?) {
+
     }
 
-    public static final Parcelable.Creator<ColorIcon> CREATOR = new Parcelable.Creator<ColorIcon>() {
-        @Override
-        public ColorIcon createFromParcel(Parcel source) {
-            return null;
-        }
-        @Override
-        public ColorIcon[] newArray(int size) {
-            return new ColorIcon[size];
-        }
-    };
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    override fun getDrawable(context: Context?): Drawable? {
+        return drawable
     }
 
-    private int setBackgroundColor(String text) {
-        switch (text) {
-            case "a":
-                return 0xffa85529;
-            case "b":
-                return 0xff8f6980;
-            case "c":
-                return 0xff698f78;
-            case "d":
-                return 0xff4f8240;
-            case "e":
-                return 0xff29a894;
-            case "f":
-                return 0xffa8293d;
-            case "g":
-                return 0xffa98963;
-            case "h":
-                return 0xff593d42;
-            case "i":
-                return 0xff3d4259;
-            case "j":
-                return 0xff543d59;
-            case "k":
-                return 0xff42593d;
-            case "l":
-                return 0xff768089;
-            case "m":
-                return 0xff2f828a;
-            case "n":
-                return 0xff8a2f55;
-            case  "o":
-                return 0xff63aad3;
-            case "p":
-                return 0xff146683;
-            case "q":
-                return 0xff1fddff;
-            case  "r":
-                return 0xffcda441;
-            case "s":
-                return 0xff99cc99;
-            case "t":
-                return 0xffffc1cc;
-            case  "u":
-                return 0xff734f96;
-            case  "v":
-                return 0xff003366;
-            case  "w":
-                return 0xffffa500;
-            case  "x":
-                return 0xff007474;
-            case  "y":
-                return 0xffffd800;
-            case  "z":
-                return 0xff9678b6;
-            default:
-                return 0xff0f0f0f;
-        }
+    override fun apply(imageView: ImageView?): Boolean {
+        return  false
+    }
 
+    override fun writeToParcel(dest: Parcel, flags: Int) {}
+    private fun setBackgroundColor(text: String): Int {
+        return when (text) {
+            "a" -> -0x57aad7
+            "b" -> -0x709680
+            "c" -> -0x967088
+            "d" -> -0xb07dc0
+            "e" -> -0xd6576c
+            "f" -> -0x57d6c3
+            "g" -> -0x56769d
+            "h" -> -0xa6c2be
+            "i" -> -0xc2bda7
+            "j" -> -0xabc2a7
+            "k" -> -0xbda6c3
+            "l" -> -0x897f77
+            "m" -> -0xd07d76
+            "n" -> -0x75d0ab
+            "o" -> -0x9c552d
+            "p" -> -0xeb997d
+            "q" -> -0xe02201
+            "r" -> -0x325bbf
+            "s" -> -0x663367
+            "t" -> -0x3e34
+            "u" -> -0x8cb06a
+            "v" -> -0xffcc9a
+            "w" -> -0x5b00
+            "x" -> -0xff8b8c
+            "y" -> -0x2800
+            "z" -> -0x69874a
+            else -> -0xf0f0f1
+        }
+    }
+
+    companion object {
+        private const val COLOR = "color"
+        private const val NAME = "name"
+        val CREATOR: Parcelable.Creator<ColorIcon?> = object : Parcelable.Creator<ColorIcon?> {
+            override fun createFromParcel(source: Parcel): ColorIcon? {
+                return null
+            }
+
+            override fun newArray(size: Int): Array<ColorIcon?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
+
+    init {
+        mName = name.substring(0, 1).toUpperCase()
     }
 }

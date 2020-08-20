@@ -16,65 +16,37 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.summer.expenses.customviews;
+package com.summer.expenses.customviews
 
 /**
  * This interface implements all the colors of a theme.
  */
-public interface ITheme {
-
-    int getColorPrimary();
-
-    int getColorPrimaryDark();
-
-    int getColorAccent();
-
-    ThemeEngine.Mode getMode();
-
-    boolean isDark();
-
-    int getTextColorPrimary();
-
-    int getTextColorSecondary();
-
-    int getTextColorPrimaryInverse();
-
-    int getTextColorSecondaryInverse();
-
-    int getColorCardBackground();
-
-    int getColorWindowForeground();
-
-    int getColorWindowBackground();
-
-    int getColorRipple();
-
-    int getIconColor();
-
-    int getHintTextColor();
-
-    int getErrorColor();
-
-    int getDialogBackgroundColor();
-
-    int getDrawerBackgroundColor();
-
-    int getDrawerIconColor();
-
-    int getDrawerSelectedIconColor();
-
-    int getDrawerTextColor();
-
-    int getDrawerSelectedTextColor();
-
-    int getDrawerSelectedItemColor();
-
-    int getBestColor(int background);
-
-    int getBestTextColor(int background);
-
-    int getBestHintColor(int background);
-
-    int getBestIconColor(int background);
+interface ITheme {
+    val colorPrimary: Int
+    val colorPrimaryDark: Int
+    val colorAccent: Int
+    val mode: ThemeEngine.Mode?
+    val isDark: Boolean
+    val textColorPrimary: Int
+    val textColorSecondary: Int
+    val textColorPrimaryInverse: Int
+    val textColorSecondaryInverse: Int
+    val colorCardBackground: Int
+    val colorWindowForeground: Int
+    val colorWindowBackground: Int
+    val colorRipple: Int
+    val iconColor: Int
+    val hintTextColor: Int
+    val errorColor: Int
+    val dialogBackgroundColor: Int
+    val drawerBackgroundColor: Int
+    val drawerIconColor: Int
+    val drawerSelectedIconColor: Int
+    val drawerTextColor: Int
+    val drawerSelectedTextColor: Int
+    val drawerSelectedItemColor: Int
+    fun getBestColor(background: Int): Int
+    fun getBestTextColor(background: Int): Int
+    fun getBestHintColor(background: Int): Int
+    fun getBestIconColor(background: Int): Int
 }

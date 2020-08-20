@@ -52,12 +52,10 @@ class MainActivity : AppCompatActivity() {
         // Create a few sample profile
         // NOTE you have to define the loader logic too. See the CustomApplication for more details
         val profile = MyProfileDrawerItem().apply {
-            setIcon(
-                ImageHolder(
-                    ColorIcon(
-                        "S"
-                    ).drawable
-                )
+            icon = ImageHolder(
+                ColorIcon(
+                    "S"
+                ).drawable
             ); nameText = "Mike Penz"; descriptionText = "mikepenz@gmail.com"; identifier = 100
         }
         val profile2 = ProfileDrawerItem().apply {
@@ -96,21 +94,17 @@ class MainActivity : AppCompatActivity() {
                 profile4,
                 profile5,
                 profile6,MyProfileDrawerItem().apply {
-                    setIcon(
-                        ImageHolder(
-                            ColorIcon(
-                                "A"
-                            ).drawable
-                        )
+                    icon = ImageHolder(
+                        ColorIcon(
+                            "A"
+                        ).drawable
                     ); nameText = "Mike Penz"; descriptionText = "mikepenz@gmail.com"; identifier = 100
                 },
                 MyProfileDrawerItem().apply {
-                    setIcon(
-                        ImageHolder(
-                            ColorIcon(
-                                "B"
-                            ).drawable
-                        )
+                    icon = ImageHolder(
+                        ColorIcon(
+                            "B"
+                        ).drawable
                     ); nameText = "Mike Penz"; descriptionText = "mikepenz@gmail.com"; identifier = 100
                 },
                 //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
@@ -151,6 +145,8 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         actionBarDrawerToggle.syncState()
     }
+
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return super.onOptionsItemSelected(item)

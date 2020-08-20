@@ -16,544 +16,569 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.summer.expenses.customviews.text
 
-package com.summer.expenses.customviews.text;
-
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.core.view.ViewCompat;
-
-
-import com.summer.expenses.R;
-import com.summer.expenses.storage.cache.TypefaceCache;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.animation.ValueAnimator
+import android.animation.ValueAnimator.AnimatorUpdateListener
+import android.content.Context
+import android.content.res.TypedArray
+import android.graphics.*
+import android.graphics.drawable.Drawable
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import android.view.View.OnTouchListener
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.view.ViewCompat
+import com.summer.expenses.R
+import com.summer.expenses.storage.cache.TypefaceCache
+import java.util.*
 
 /**
  * Created by andrea on 27/01/18.
  */
-public class MaterialEditText extends androidx.appcompat.widget.AppCompatEditText implements ValueAnimator.AnimatorUpdateListener, View.OnTouchListener {
+open class MaterialEditText : AppCompatEditText, AnimatorUpdateListener, OnTouchListener {
+    private var mIconColorNormal = 0
+    private var mIconColorFocused = 0
+    private var mFloatingLabelColorNormal = 0
+    private var mFloatingLabelColorFocused = 0
+    private var mBottomLineColorNormal = 0
+    private var mBottomLineColorFocused = 0
+    private var mBottomLineColorError = 0
+    private var mErrorTextColor = 0
+    var mode: Mode? = null
+        private set
+    private var mLeftDrawable: Array<Drawable?>? = null
+    private var mHint: String? = null
+    private var mError = false
+    private var mErrorMessage: String? = null
+    private var mValidators: MutableList<Validator>? = null
+    private var mAnimator: ValueAnimator? = null
+    private var mLabelVisible = false
+    private var mCancelButton: Drawable? = null
+    private var mShowCancelButton = false
+    private var mIconMargin = 0
+    private var mDefaultBottomLineSize = 0
+    private var mFocusedBottomLineSize = 0
+    private var mCancelButtonListener: CancelButtonListener? = null
+    private var mFloatingLabelPaint: Paint? = null
+    private var mErrorTextPaint: Paint? = null
+    private var mBottomLinePaint: Paint? = null
+    private var mMeter: Rect? = null
 
-    private final static int ANIMATION_DURATION = 300;
-    private final static int ICON_CONTAINER_SIZE_DP = 48;
-    private final static int ICON_MARGIN_SIZE_DP = 8;
-    private final static int NO_ERROR_BOTTOM_PADDING_DP = 16;
-    private final static int BOTTOM_LINE_PADDING_DP = 8;
-    private final static int SIDE_PADDING_DP = 8;
-    private final static int CANCEL_BUTTON_PADDING_DP = 36;
-    private final static int CANCEL_BUTTON_SIZE_DP = 24;
-
-    private int mIconColorNormal;
-    private int mIconColorFocused;
-    private int mFloatingLabelColorNormal;
-    private int mFloatingLabelColorFocused;
-    private int mBottomLineColorNormal;
-    private int mBottomLineColorFocused;
-    private int mBottomLineColorError;
-    private int mErrorTextColor;
-
-    private Mode mMode;
-    private Drawable mLeftDrawable[];
-    private String mHint;
-
-    private boolean mError;
-    private String mErrorMessage;
-    private List<Validator> mValidators;
-    private ValueAnimator mAnimator;
-    private boolean mLabelVisible;
-    private Drawable mCancelButton;
-    private boolean mShowCancelButton;
-
-    private int mIconMargin;
-    private int mDefaultBottomLineSize;
-    private int mFocusedBottomLineSize;
-
-    private CancelButtonListener mCancelButtonListener;
-
-    private Paint mFloatingLabelPaint;
-    private Paint mErrorTextPaint;
-    private Paint mBottomLinePaint;
-
-    private Rect mMeter;
-
-    public MaterialEditText(Context context) {
-        super(context);
-        initialize(context, null, 0);
+    constructor(context: Context) : super(context) {
+        initialize(context, null, 0)
     }
 
-    public MaterialEditText(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initialize(context, attrs, 0);
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        initialize(context, attrs, 0)
     }
 
-    public MaterialEditText(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        initialize(context, attrs, defStyleAttr);
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        initialize(context, attrs, defStyleAttr)
     }
 
-    private void initialize(Context context, AttributeSet attrs, int defStyleAttr) {
+    private fun initialize(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
         // initialize paints
-        mFloatingLabelPaint = new Paint();
-        mFloatingLabelPaint.setAntiAlias(true);
-        mErrorTextPaint = new Paint();
-        mErrorTextPaint.setAntiAlias(true);
-        mBottomLinePaint = new Paint();
-        mBottomLinePaint.setAntiAlias(true);
-        mMeter = new Rect();
-        mLabelVisible = false;
+        mFloatingLabelPaint = Paint()
+        mFloatingLabelPaint!!.isAntiAlias = true
+        mErrorTextPaint = Paint()
+        mErrorTextPaint!!.isAntiAlias = true
+        mBottomLinePaint = Paint()
+        mBottomLinePaint!!.isAntiAlias = true
+        mMeter = Rect()
+        mLabelVisible = false
         // disable background
-        Utils.setBackgroundCompat(this, null);
+        Utils.setBackgroundCompat(this, null)
         // parse attributes from xml
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MaterialEditText, defStyleAttr, 0);
+        val typedArray =
+            context.obtainStyledAttributes(attrs, R.styleable.MaterialEditText, defStyleAttr, 0)
         try {
-            onParseAttributes(typedArray);
-        } catch (Exception e) {
-            e.printStackTrace();
+            onParseAttributes(typedArray)
+        } catch (e: Exception) {
+            e.printStackTrace()
         } finally {
-            typedArray.recycle();
+            typedArray.recycle()
         }
         // create validator manager and calculate view padding
-        mValidators = new ArrayList<>();
-        setupValidators();
-        calculatePadding();
-        setOnTouchListener(this);
+        mValidators = ArrayList()
+        setupValidators()
+        calculatePadding()
+        setOnTouchListener(this)
     }
 
-    protected void onParseAttributes(TypedArray typedArray) {
-        mMode = Mode.getMode(typedArray.getInt(R.styleable.MaterialEditText_met_mode, Mode.STANDARD.mMode));
-        mIconMargin = typedArray.getDimensionPixelSize(R.styleable.MaterialEditText_met_leftIconMargin, getPixels(ICON_MARGIN_SIZE_DP));
-        mIconColorNormal = typedArray.getColor(R.styleable.MaterialEditText_met_leftIconColorNormal, Color.GRAY);
-        mIconColorFocused = typedArray.getColor(R.styleable.MaterialEditText_met_leftIconColorFocused, Color.BLACK);
-        int leftIcon = typedArray.getResourceId(R.styleable.MaterialEditText_met_leftIcon, -1);
+    protected fun onParseAttributes(typedArray: TypedArray) {
+        mode = Mode.getMode(
+            typedArray.getInt(
+                R.styleable.MaterialEditText_met_mode,
+                Mode.STANDARD.mMode
+            )
+        )
+        mIconMargin = typedArray.getDimensionPixelSize(
+            R.styleable.MaterialEditText_met_leftIconMargin, getPixels(
+                ICON_MARGIN_SIZE_DP
+            )
+        )
+        mIconColorNormal =
+            typedArray.getColor(R.styleable.MaterialEditText_met_leftIconColorNormal, Color.GRAY)
+        mIconColorFocused =
+            typedArray.getColor(R.styleable.MaterialEditText_met_leftIconColorFocused, Color.BLACK)
+        val leftIcon = typedArray.getResourceId(R.styleable.MaterialEditText_met_leftIcon, -1)
         if (leftIcon > 0) {
-            Drawable drawable = Utils.getDrawableCompat(getContext(), leftIcon);
-            mLeftDrawable = generateDrawables(drawable);
-            applyTinting(mLeftDrawable);
+            val drawable = Utils.getDrawableCompat(context, leftIcon)
+            mLeftDrawable = generateDrawables(drawable)
+            applyTinting(mLeftDrawable)
         }
-        mHint = typedArray.getString(R.styleable.MaterialEditText_met_floatingLabelText);
+        mHint = typedArray.getString(R.styleable.MaterialEditText_met_floatingLabelText)
         if (mHint == null) {
-            CharSequence hint = getHint();
+            val hint = hint
             if (hint != null) {
-                mHint = hint.toString();
+                mHint = hint.toString()
             }
         }
-        mFloatingLabelColorNormal = typedArray.getColor(R.styleable.MaterialEditText_met_floatingLabelTextColorNormal, Color.GRAY);
-        mFloatingLabelColorFocused = typedArray.getColor(R.styleable.MaterialEditText_met_floatingLabelTextColorFocused, Color.BLACK);
-        mFloatingLabelPaint.setTextSize(typedArray.getDimension(R.styleable.MaterialEditText_met_floatingLabelTextSize, getContext().getResources().getDimension(R.dimen.material_component_floating_label_text_size)));
-        String floatingLabelTypeface = typedArray.getString(R.styleable.MaterialEditText_met_floatingLabelTextTypeface);
+        mFloatingLabelColorNormal = typedArray.getColor(
+            R.styleable.MaterialEditText_met_floatingLabelTextColorNormal,
+            Color.GRAY
+        )
+        mFloatingLabelColorFocused = typedArray.getColor(
+            R.styleable.MaterialEditText_met_floatingLabelTextColorFocused,
+            Color.BLACK
+        )
+        mFloatingLabelPaint!!.textSize = typedArray.getDimension(
+            R.styleable.MaterialEditText_met_floatingLabelTextSize,
+            context.resources.getDimension(R.dimen.material_component_floating_label_text_size)
+        )
+        val floatingLabelTypeface =
+            typedArray.getString(R.styleable.MaterialEditText_met_floatingLabelTextTypeface)
         if (floatingLabelTypeface != null) {
-            mFloatingLabelPaint.setTypeface(TypefaceCache.get(getContext(), floatingLabelTypeface));
+            mFloatingLabelPaint!!.typeface = TypefaceCache[context, floatingLabelTypeface]
         }
-        mBottomLineColorNormal = typedArray.getColor(R.styleable.MaterialEditText_met_bottomLineColorNormal, Color.GRAY);
-        mBottomLineColorFocused = typedArray.getColor(R.styleable.MaterialEditText_met_bottomLineColorFocused, Color.BLACK);
-        mBottomLineColorError = typedArray.getColor(R.styleable.MaterialEditText_met_bottomLineColorError, Color.RED);
-        mDefaultBottomLineSize = typedArray.getDimensionPixelSize(R.styleable.MaterialEditText_met_bottomLineColorUnfocusedSize, getPixels(1));
-        mFocusedBottomLineSize = typedArray.getDimensionPixelSize(R.styleable.MaterialEditText_met_bottomLineColorFocusedSize, getPixels(2));
-        mErrorTextColor = typedArray.getColor(R.styleable.MaterialEditText_met_errorTextColor, Color.RED);
-        mErrorTextPaint.setTextSize(typedArray.getDimension(R.styleable.MaterialEditText_met_errorTextSize, getContext().getResources().getDimension(R.dimen.material_component_bottom_line_error_text_size)));
-        String errorTypeface = typedArray.getString(R.styleable.MaterialEditText_met_errorTextTypeface);
+        mBottomLineColorNormal =
+            typedArray.getColor(R.styleable.MaterialEditText_met_bottomLineColorNormal, Color.GRAY)
+        mBottomLineColorFocused = typedArray.getColor(
+            R.styleable.MaterialEditText_met_bottomLineColorFocused,
+            Color.BLACK
+        )
+        mBottomLineColorError =
+            typedArray.getColor(R.styleable.MaterialEditText_met_bottomLineColorError, Color.RED)
+        mDefaultBottomLineSize = typedArray.getDimensionPixelSize(
+            R.styleable.MaterialEditText_met_bottomLineColorUnfocusedSize,
+            getPixels(1)
+        )
+        mFocusedBottomLineSize = typedArray.getDimensionPixelSize(
+            R.styleable.MaterialEditText_met_bottomLineColorFocusedSize,
+            getPixels(2)
+        )
+        mErrorTextColor =
+            typedArray.getColor(R.styleable.MaterialEditText_met_errorTextColor, Color.RED)
+        mErrorTextPaint!!.textSize = typedArray.getDimension(
+            R.styleable.MaterialEditText_met_errorTextSize,
+            context.resources.getDimension(R.dimen.material_component_bottom_line_error_text_size)
+        )
+        val errorTypeface = typedArray.getString(R.styleable.MaterialEditText_met_errorTextTypeface)
         if (errorTypeface != null) {
-            mErrorTextPaint.setTypeface(TypefaceCache.get(getContext(), errorTypeface));
+            mErrorTextPaint!!.typeface = TypefaceCache[context, errorTypeface]
         }
-        mShowCancelButton = typedArray.getBoolean(R.styleable.MaterialEditText_met_showCancelButton, false);
-        int cancelButtonRes = typedArray.getResourceId(R.styleable.MaterialEditText_met_cancelButton, R.drawable.ic_clear_black_24dp);
-        mCancelButton = Utils.getDrawableCompat(getContext(), cancelButtonRes);
-        applyTinting(mCancelButton, mBottomLineColorNormal);
+        mShowCancelButton =
+            typedArray.getBoolean(R.styleable.MaterialEditText_met_showCancelButton, false)
+        val cancelButtonRes = typedArray.getResourceId(
+            R.styleable.MaterialEditText_met_cancelButton,
+            R.drawable.ic_clear_black_24dp
+        )
+        mCancelButton = Utils.getDrawableCompat(context, cancelButtonRes)
+        applyTinting(mCancelButton, mBottomLineColorNormal)
     }
 
-    private void calculatePadding() {
-        int paddingLeft = 0;
-        int paddingTop = 0;
-        int paddingBottom = 0;
-        int paddingRight = 0;
+    private fun calculatePadding() {
+        var paddingLeft = 0
+        var paddingTop = 0
+        var paddingBottom = 0
+        var paddingRight = 0
         // add default 8 dp padding
-        paddingLeft += getPixels(SIDE_PADDING_DP);
-        paddingRight += getPixels(SIDE_PADDING_DP);
+        paddingLeft += getPixels(SIDE_PADDING_DP)
+        paddingRight += getPixels(SIDE_PADDING_DP)
         // calculate padding left / right
         if (mLeftDrawable != null) {
-            int extraPadding = getPixels(ICON_CONTAINER_SIZE_DP) + mIconMargin;
-            if (isRtl()) {
-                paddingRight += extraPadding;
+            val extraPadding = getPixels(ICON_CONTAINER_SIZE_DP) + mIconMargin
+            if (isRtl) {
+                paddingRight += extraPadding
             } else {
-                paddingLeft += extraPadding;
+                paddingLeft += extraPadding
             }
         }
         // calculate cancel button padding
         if (mShowCancelButton) {
-            int cancelButtonSize = getPixels(CANCEL_BUTTON_PADDING_DP);
-            if (isRtl()) {
-                paddingLeft += cancelButtonSize;
+            val cancelButtonSize = getPixels(CANCEL_BUTTON_PADDING_DP)
+            if (isRtl) {
+                paddingLeft += cancelButtonSize
             } else {
-                paddingRight += cancelButtonSize;
+                paddingRight += cancelButtonSize
             }
         }
         // calculate bottom padding
-        paddingBottom += getPixels(NO_ERROR_BOTTOM_PADDING_DP);
+        paddingBottom += getPixels(NO_ERROR_BOTTOM_PADDING_DP)
         if (mError) {
             // append error text size
-            mErrorTextPaint.getTextBounds(mErrorMessage, 0, mErrorMessage.length(), mMeter);
-            paddingBottom += mMeter.height();
+            mErrorTextPaint!!.getTextBounds(mErrorMessage, 0, mErrorMessage!!.length, mMeter)
+            paddingBottom += mMeter!!.height()
         }
         // calculate top padding
-        paddingTop += getPixels(16);
-        if (mMode == Mode.FLOATING_LABEL && mHint != null) {
+        paddingTop += getPixels(16)
+        if (mode == Mode.FLOATING_LABEL && mHint != null) {
             // append floating label text size
-            mFloatingLabelPaint.getTextBounds(mHint, 0, mHint.length(), mMeter);
-            paddingTop += mMeter.height();
+            mFloatingLabelPaint!!.getTextBounds(mHint, 0, mHint!!.length, mMeter)
+            paddingTop += mMeter!!.height()
         }
         // apply padding
-        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
     }
 
-    private boolean isRtl() {
-        return Utils.isRtl(getResources());
+    private val isRtl: Boolean
+        private get() = Utils.isRtl(resources)
+
+    private fun getPixels(dp: Int): Int {
+        return Utils.getPixels(dp, resources).toInt()
     }
 
-    private int getPixels(int dp) {
-        return (int) Utils.getPixels(dp, getResources());
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
         // measure
-        int measuredWidth = getMeasuredWidth();
-        int measuredHeight = getMeasuredHeight();
+        val measuredWidth = measuredWidth
+        val measuredHeight = measuredHeight
         if (Math.min(measuredWidth, measuredHeight) == 0) {
             // skip drawing
-            return;
+            return
         }
-        onDrawLeftIcon(canvas);
-        onDrawFloatingLabel(canvas);
-        onDrawBottomLine(canvas);
-        onDrawCancelButton(canvas);
-        onDrawErrorMessage(canvas);
+        onDrawLeftIcon(canvas)
+        onDrawFloatingLabel(canvas)
+        onDrawBottomLine(canvas)
+        onDrawCancelButton(canvas)
+        onDrawErrorMessage(canvas)
     }
 
-    protected void onDrawLeftIcon(Canvas canvas) {
+    protected fun onDrawLeftIcon(canvas: Canvas?) {
         if (mLeftDrawable != null) {
-            Drawable drawable = hasFocus() ? mLeftDrawable[1] : mLeftDrawable[0];
-            int rectTop = getPaddingTop() - getPixels(8);
-            int rectLeft = isRtl() ? (getMeasuredWidth() - getPaddingRight() + mIconMargin) : getPixels(SIDE_PADDING_DP);
-            int padding = (int) Utils.getPixels(12, getResources());
-            int iconTop = rectTop + padding;
-            int iconLeft = rectLeft + padding + getScrollX();
-            int size = (int) Utils.getPixels(24, getResources());
-            drawable.setBounds(iconLeft, iconTop, iconLeft + size, iconTop + size);
-            drawable.draw(canvas);
+            val drawable = if (hasFocus()) mLeftDrawable!![1] else mLeftDrawable!![0]
+            val rectTop = paddingTop - getPixels(8)
+            val rectLeft = if (isRtl) measuredWidth - paddingRight + mIconMargin else getPixels(
+                SIDE_PADDING_DP
+            )
+            val padding = Utils.getPixels(12, resources)
+                .toInt()
+            val iconTop = rectTop + padding
+            val iconLeft = rectLeft + padding + scrollX
+            val size = Utils.getPixels(24, resources)
+                .toInt()
+            drawable!!.setBounds(iconLeft, iconTop, iconLeft + size, iconTop + size)
+            drawable.draw(canvas!!)
         }
     }
 
-    protected void onDrawFloatingLabel(Canvas canvas) {
-        if (mMode == Mode.FLOATING_LABEL && mHint != null) {
-            mFloatingLabelPaint.setColor(hasFocus() ? mFloatingLabelColorFocused : mFloatingLabelColorNormal);
-            mFloatingLabelPaint.getTextBounds(mHint, 0, mHint.length(), mMeter);
-            int startY = getPaddingTop() + mMeter.height();
-            int endY = getPaddingTop() - getPixels(8);
-            int startX = getScrollX() + (isRtl() ? (getMeasuredWidth() - getPaddingRight() - mMeter.width()) : getPaddingLeft());
-            int textY = startY - ((int) ((startY - endY) * getAnimatedY()));
+    protected fun onDrawFloatingLabel(canvas: Canvas) {
+        if (mode == Mode.FLOATING_LABEL && mHint != null) {
+            mFloatingLabelPaint!!.color =
+                if (hasFocus()) mFloatingLabelColorFocused else mFloatingLabelColorNormal
+            mFloatingLabelPaint!!.getTextBounds(mHint, 0, mHint!!.length, mMeter)
+            val startY = paddingTop + mMeter!!.height()
+            val endY = paddingTop - getPixels(8)
+            val startX =
+                scrollX + if (isRtl) measuredWidth - paddingRight - mMeter!!.width() else paddingLeft
+            val textY = startY - ((startY - endY) * animatedY).toInt()
             if (textY < startY) {
-                canvas.drawText(mHint, startX, textY, mFloatingLabelPaint);
+                canvas.drawText(mHint!!, startX.toFloat(), textY.toFloat(), mFloatingLabelPaint!!)
             }
         }
     }
 
-    protected void onDrawBottomLine(Canvas canvas) {
+    protected fun onDrawBottomLine(canvas: Canvas) {
         if (mError) {
-            mBottomLinePaint.setColor(mBottomLineColorError);
+            mBottomLinePaint!!.color = mBottomLineColorError
         } else if (hasFocus()) {
-            mBottomLinePaint.setColor(mBottomLineColorFocused);
+            mBottomLinePaint!!.color = mBottomLineColorFocused
         } else {
-            mBottomLinePaint.setColor(mBottomLineColorNormal);
+            mBottomLinePaint!!.color = mBottomLineColorNormal
         }
-        int lineHeight = hasFocus() ? mFocusedBottomLineSize : mDefaultBottomLineSize;
-        int top = getMeasuredHeight() - getPaddingBottom() + getPixels(BOTTOM_LINE_PADDING_DP) - lineHeight;
-        int left = getPaddingLeft() + getScrollX() + (mShowCancelButton && isRtl() ? getPixels(CANCEL_BUTTON_PADDING_DP) : 0);
-        int right = getScrollX() + getMeasuredWidth() - getPaddingRight() + (mShowCancelButton  && !isRtl()? getPixels(CANCEL_BUTTON_PADDING_DP) : 0);
+        val lineHeight = if (hasFocus()) mFocusedBottomLineSize else mDefaultBottomLineSize
+        val top = measuredHeight - paddingBottom + getPixels(BOTTOM_LINE_PADDING_DP) - lineHeight
+        val left = paddingLeft + scrollX + if (mShowCancelButton && isRtl) getPixels(
+            CANCEL_BUTTON_PADDING_DP
+        ) else 0
+        val right =
+            scrollX + measuredWidth - paddingRight + if (mShowCancelButton && !isRtl) getPixels(
+                CANCEL_BUTTON_PADDING_DP
+            ) else 0
         canvas.drawRect(
-                left,
-                top,
-                right,
-                top + lineHeight,
-                mBottomLinePaint
-        );
+            left.toFloat(),
+            top.toFloat(),
+            right.toFloat(),
+            top + lineHeight.toFloat(),
+            mBottomLinePaint!!
+        )
     }
 
-    protected void onDrawCancelButton(Canvas canvas) {
-        if (mShowCancelButton && mCancelButton != null && getText().length() > 0) {
-            int iconSize = getPixels(CANCEL_BUTTON_SIZE_DP);
-            int iconPadding = getPixels(CANCEL_BUTTON_PADDING_DP);
-            int internalMargin = (iconPadding - iconSize) / 2;
-            int left = getScrollX() + internalMargin + (isRtl() ? (getPaddingLeft() - iconPadding) : (getMeasuredWidth() - getPaddingRight()));
-            int top = getPaddingTop();
-            mCancelButton.setBounds(left, top, left + iconSize, top + iconSize);
-            mCancelButton.draw(canvas);
+    protected fun onDrawCancelButton(canvas: Canvas?) {
+        if (mShowCancelButton && mCancelButton != null && text!!.length > 0) {
+            val iconSize = getPixels(CANCEL_BUTTON_SIZE_DP)
+            val iconPadding = getPixels(CANCEL_BUTTON_PADDING_DP)
+            val internalMargin = (iconPadding - iconSize) / 2
+            val left =
+                scrollX + internalMargin + if (isRtl) paddingLeft - iconPadding else measuredWidth - paddingRight
+            val top = paddingTop
+            mCancelButton!!.setBounds(left, top, left + iconSize, top + iconSize)
+            mCancelButton!!.draw(canvas!!)
         }
     }
 
-    protected void onDrawErrorMessage(Canvas canvas) {
+    protected fun onDrawErrorMessage(canvas: Canvas) {
         if (mError) {
-            mErrorTextPaint.setColor(mErrorTextColor);
-            mErrorTextPaint.getTextBounds(mErrorMessage, 0, mErrorMessage.length(), mMeter);
-            int startX = isRtl() ? (getMeasuredWidth() - getPaddingRight() - mMeter.width()) : getPaddingLeft();
-            int startY = getMeasuredHeight() - getPixels(4);
-            canvas.drawText(mErrorMessage, startX + getScrollX(), startY, mErrorTextPaint);
+            mErrorTextPaint!!.color = mErrorTextColor
+            mErrorTextPaint!!.getTextBounds(mErrorMessage, 0, mErrorMessage!!.length, mMeter)
+            val startX = if (isRtl) measuredWidth - paddingRight - mMeter!!.width() else paddingLeft
+            val startY = measuredHeight - getPixels(4)
+            canvas.drawText(
+                mErrorMessage!!,
+                startX + scrollX.toFloat(),
+                startY.toFloat(),
+                mErrorTextPaint!!
+            )
         }
     }
 
-    private void showFloatingLabel() {
+    private fun showFloatingLabel() {
         if (mAnimator != null) {
-            mAnimator.cancel();
+            mAnimator!!.cancel()
         }
-        mAnimator = ValueAnimator.ofFloat(0, 1);
-        mAnimator.setDuration(ANIMATION_DURATION);
-        mAnimator.addUpdateListener(this);
-        mAnimator.start();
+        mAnimator = ValueAnimator.ofFloat(0f, 1f)
+        mAnimator!!.duration = ANIMATION_DURATION.toLong()
+        mAnimator!!.addUpdateListener(this)
+        mAnimator!!.start()
     }
 
-    private void hideFloatingLabel() {
+    private fun hideFloatingLabel() {
         if (mAnimator != null) {
-            mAnimator.cancel();
+            mAnimator!!.cancel()
         }
-        mAnimator = ValueAnimator.ofFloat(1, 0);
-        mAnimator.setDuration(ANIMATION_DURATION);
-        mAnimator.addUpdateListener(this);
-        mAnimator.start();
+        mAnimator = ValueAnimator.ofFloat(1f, 0f)
+        mAnimator!!.duration = ANIMATION_DURATION.toLong()
+        mAnimator!!.addUpdateListener(this)
+        mAnimator!!.start()
     }
 
-    private float getAnimatedY() {
-        if (mAnimator != null) {
-            return (float) mAnimator.getAnimatedValue();
-        }
-        return 0;
-    }
+    private val animatedY: Float
+        private get() = if (mAnimator != null) {
+            mAnimator!!.animatedValue as Float
+        } else 0F
 
-    public void setMode(Mode mode) {
-        if (mMode != mode) {
-            mMode = mode;
-            calculatePadding();
+    fun setMode(mode: Mode) {
+        if (this.mode != mode) {
+            this.mode = mode
+            calculatePadding()
         }
     }
 
-    public Mode getMode() {
-        return mMode;
+    fun setFloatingLabelColorNormal(floatingLabelColorNormal: Int) {
+        mFloatingLabelColorNormal = floatingLabelColorNormal
     }
 
-    public void setFloatingLabelColorNormal(int floatingLabelColorNormal) {
-        mFloatingLabelColorNormal = floatingLabelColorNormal;
+    fun setFloatingLabelColorFocused(floatingLabelColorFocused: Int) {
+        mFloatingLabelColorFocused = floatingLabelColorFocused
     }
 
-    public void setFloatingLabelColorFocused(int floatingLabelColorFocused) {
-        mFloatingLabelColorFocused = floatingLabelColorFocused;
+    fun setBottomLineColorNormal(bottomLineColorNormal: Int) {
+        mBottomLineColorNormal = bottomLineColorNormal
+        applyTinting(mCancelButton, bottomLineColorNormal)
     }
 
-    public void setBottomLineColorNormal(int bottomLineColorNormal) {
-        mBottomLineColorNormal = bottomLineColorNormal;
-        applyTinting(mCancelButton, bottomLineColorNormal);
+    fun setBottomLineColorFocused(bottomLineColorFocused: Int) {
+        mBottomLineColorFocused = bottomLineColorFocused
     }
 
-    public void setBottomLineColorFocused(int bottomLineColorFocused) {
-        mBottomLineColorFocused = bottomLineColorFocused;
+    fun setBottomLineColorError(bottomLineColorError: Int) {
+        mBottomLineColorError = bottomLineColorError
     }
 
-    public void setBottomLineColorError(int bottomLineColorError) {
-        mBottomLineColorError = bottomLineColorError;
-    }
-
-    public void setLeftIconColorNormal(int iconColorNormal) {
-        mIconColorNormal = iconColorNormal;
+    fun setLeftIconColorNormal(iconColorNormal: Int) {
+        mIconColorNormal = iconColorNormal
         if (mLeftDrawable != null) {
-            mLeftDrawable[0].setColorFilter(mIconColorNormal, PorterDuff.Mode.SRC_IN);
+            mLeftDrawable!![0]!!.setColorFilter(mIconColorNormal, PorterDuff.Mode.SRC_IN)
         }
     }
 
-    public void setLeftIconColorFocused(int iconColorFocused) {
-        mIconColorFocused = iconColorFocused;
+    fun setLeftIconColorFocused(iconColorFocused: Int) {
+        mIconColorFocused = iconColorFocused
         if (mLeftDrawable != null) {
-            mLeftDrawable[1].setColorFilter(mIconColorFocused, PorterDuff.Mode.SRC_IN);
+            mLeftDrawable!![1]!!.setColorFilter(mIconColorFocused, PorterDuff.Mode.SRC_IN)
         }
     }
 
-    public void setLeftDrawable(@DrawableRes int drawable) {
-        setLeftDrawable(Utils.getDrawableCompat(getContext(), drawable));
+    fun setLeftDrawable(@DrawableRes drawable: Int) {
+        setLeftDrawable(Utils.getDrawableCompat(context, drawable))
     }
 
-    public void setLeftDrawable(Drawable drawable) {
-        mLeftDrawable = generateDrawables(drawable);
-        applyTinting(mLeftDrawable);
-        calculatePadding();
+    fun setLeftDrawable(drawable: Drawable?) {
+        mLeftDrawable = generateDrawables(drawable)
+        applyTinting(mLeftDrawable)
+        calculatePadding()
     }
 
-    public void setTextViewMode(boolean textViewMode) {
-        setFocusable(!textViewMode);
-        setFocusableInTouchMode(!textViewMode);
-        setLongClickable(!textViewMode);
+    fun setTextViewMode(textViewMode: Boolean) {
+        isFocusable = !textViewMode
+        isFocusableInTouchMode = !textViewMode
+        isLongClickable = !textViewMode
     }
 
-    public String getTextAsString() {
-        return getText().toString();
+    val textAsString: String
+        get() = text.toString()
+
+    fun setOnCancelButtonClickListener(cancelButtonClickListener: CancelButtonListener?) {
+        mCancelButtonListener = cancelButtonClickListener
     }
 
-    public void setOnCancelButtonClickListener(CancelButtonListener cancelButtonClickListener) {
-        mCancelButtonListener = cancelButtonClickListener;
-    }
-
-    private Drawable[] generateDrawables(Drawable drawable) {
+    private fun generateDrawables(drawable: Drawable?): Array<Drawable?>? {
         if (drawable == null) {
-            return null;
+            return null
         }
-        Drawable[] drawables = new Drawable[2];
-        drawables[0] = drawable;
-        drawables[1] = drawable.getConstantState().newDrawable();
-        return drawables;
+        val drawables = arrayOfNulls<Drawable>(2)
+        drawables[0] = drawable
+        drawables[1] = drawable.constantState!!.newDrawable()
+        return drawables
     }
 
-    private void applyTinting(Drawable[] drawables) {
+    private fun applyTinting(drawables: Array<Drawable?>?) {
         if (drawables != null) {
-            drawables[0].setColorFilter(mIconColorNormal, PorterDuff.Mode.SRC_ATOP);
-            drawables[1].setColorFilter(mIconColorFocused, PorterDuff.Mode.SRC_ATOP);
+            drawables[0]!!.setColorFilter(mIconColorNormal, PorterDuff.Mode.SRC_ATOP)
+            drawables[1]!!.setColorFilter(mIconColorFocused, PorterDuff.Mode.SRC_ATOP)
         }
     }
 
-    private void applyTinting(Drawable drawable, int color) {
-        if (drawable != null) {
-            drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-        }
+    private fun applyTinting(drawable: Drawable?, color: Int) {
+        drawable?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
     }
 
-    private void setupValidators() {
-        addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+    private fun setupValidators() {
+        addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                validate(s, true)
             }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                validate(s, true);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                boolean isEmpty = s.length() == 0;
+            override fun afterTextChanged(s: Editable) {
+                val isEmpty = s.length == 0
                 if (mLabelVisible && isEmpty) {
-                    mLabelVisible = false;
-                    hideFloatingLabel();
+                    mLabelVisible = false
+                    hideFloatingLabel()
                 } else if (!mLabelVisible && !isEmpty) {
-                    mLabelVisible = true;
-                    showFloatingLabel();
+                    mLabelVisible = true
+                    showFloatingLabel()
                 }
             }
-
-        });
+        })
     }
 
-    public void showError(@StringRes int errorMessage) {
-        setError(getContext().getString(errorMessage));
+    fun showError(@StringRes errorMessage: Int) {
+        error = context.getString(errorMessage)
     }
 
-    public void showError(String errorMessage) {
-        mError = true;
-        mErrorMessage = errorMessage;
-        invalidate();
+    fun showError(errorMessage: String?) {
+        mError = true
+        mErrorMessage = errorMessage
+        invalidate()
     }
 
-    public void addValidator(Validator validator) {
-        mValidators.add(validator);
+    fun addValidator(validator: Validator) {
+        mValidators!!.add(validator)
     }
 
-    public void removeValidator(Validator validator) {
-        mValidators.remove(validator);
+    fun removeValidator(validator: Validator?) {
+        mValidators!!.remove(validator)
     }
 
-    public void removeAllValidators() {
-        mValidators.clear();
+    fun removeAllValidators() {
+        mValidators!!.clear()
     }
 
-    public int getValidatorCount() {
-        return mValidators.size();
+    val validatorCount: Int
+        get() = mValidators!!.size
+
+    fun validate(): Boolean {
+        validate(text, false)
+        return !mError
     }
 
-    public boolean validate() {
-        validate(getText(), false);
-        return !mError;
-    }
-
-    protected void validate(CharSequence charSequence, boolean onlyAutoValidator) {
-        boolean shouldInvalidate = false;
+    protected fun validate(charSequence: CharSequence?, onlyAutoValidator: Boolean) {
+        var shouldInvalidate = false
         if (mError) {
-            mError = false;
-            mErrorMessage = null;
-            shouldInvalidate = true;
+            mError = false
+            mErrorMessage = null
+            shouldInvalidate = true
         }
-        for (Validator validator : mValidators) {
+        for (validator in mValidators!!) {
             if (!onlyAutoValidator || validator.autoValidate()) {
-                mError = !validator.isValid(charSequence);
+                mError = !validator.isValid(charSequence!!)
                 if (mError) {
-                    mErrorMessage = validator.getErrorMessage();
-                    shouldInvalidate = true;
-                    break;
+                    mErrorMessage = validator.errorMessage
+                    shouldInvalidate = true
+                    break
                 }
             }
         }
         if (shouldInvalidate) {
-            calculatePadding();
+            calculatePadding()
         }
     }
 
-    @Override
-    public void onAnimationUpdate(ValueAnimator animation) {
-        ViewCompat.postInvalidateOnAnimation(this);
+    override fun onAnimationUpdate(animation: ValueAnimator) {
+        ViewCompat.postInvalidateOnAnimation(this)
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+    override fun onTouch(v: View, event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
             if (mShowCancelButton && isClearButtonAction(event)) {
-                boolean actionConsumed = false;
+                var actionConsumed = false
                 if (mCancelButtonListener != null) {
-                    actionConsumed = mCancelButtonListener.onCancelButtonClick(MaterialEditText.this);
+                    actionConsumed =
+                        mCancelButtonListener!!.onCancelButtonClick(this@MaterialEditText)
                 }
                 if (!actionConsumed) {
-                    setText("");
+                    setText("")
                 }
-                return true;
+                return true
             }
         }
-        return super.onTouchEvent(event);
+        return super.onTouchEvent(event)
     }
 
-    private boolean isClearButtonAction(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-        int iconPadding = getPixels(CANCEL_BUTTON_PADDING_DP);
-        int left = isRtl() ? (getPaddingLeft() - iconPadding) : (getMeasuredWidth() - getPaddingRight());
-        int right = left + iconPadding;
-        int top = getPaddingTop();
-        int bottom = top + iconPadding;
-        return x >= left && x <= right && y >= top && y <= bottom;
+    private fun isClearButtonAction(event: MotionEvent): Boolean {
+        val x = event.x
+        val y = event.y
+        val iconPadding = getPixels(CANCEL_BUTTON_PADDING_DP)
+        val left = if (isRtl) paddingLeft - iconPadding else measuredWidth - paddingRight
+        val right = left + iconPadding
+        val top = paddingTop
+        val bottom = top + iconPadding
+        return x >= left && x <= right && y >= top && y <= bottom
     }
 
-    public interface CancelButtonListener {
+    interface CancelButtonListener {
+        fun onCancelButtonClick(materialEditText: MaterialEditText): Boolean
+    }
 
-        boolean onCancelButtonClick(@NonNull MaterialEditText materialEditText);
+    companion object {
+        private const val ANIMATION_DURATION = 300
+        private const val ICON_CONTAINER_SIZE_DP = 48
+        private const val ICON_MARGIN_SIZE_DP = 8
+        private const val NO_ERROR_BOTTOM_PADDING_DP = 16
+        private const val BOTTOM_LINE_PADDING_DP = 8
+        private const val SIDE_PADDING_DP = 8
+        private const val CANCEL_BUTTON_PADDING_DP = 36
+        private const val CANCEL_BUTTON_SIZE_DP = 24
     }
 }

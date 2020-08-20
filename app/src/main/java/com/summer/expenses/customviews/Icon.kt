@@ -16,86 +16,71 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.summer.expenses.customviews
 
-package com.summer.expenses.customviews;
-
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Parcelable;
-import android.widget.ImageView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.content.Context
+import android.graphics.drawable.Drawable
+import android.os.Parcelable
+import android.widget.ImageView
+import org.json.JSONException
+import org.json.JSONObject
 
 /**
  * Created by andrea on 23/01/18.
  */
-public abstract class Icon implements Parcelable {
+abstract class Icon  /*package-local*/
+internal constructor() : Parcelable {
+    enum class Type(private val mType: String) {
+        RESOURCE("resource"), COLOR("color");
 
-    private static final String TYPE = "type";
-
-    public enum Type {
-        RESOURCE("resource"),
-        COLOR("color");
-
-        private final String mType;
-
-        Type(String type) {
-            mType = type;
+        override fun toString(): String {
+            return mType
         }
 
-        @Override
-        public String toString() {
-            return mType;
-        }
-
-        public static Type get(String type) {
-            if (type != null) {
-                switch (type) {
-                    case "resource":
-                        return RESOURCE;
-                    case "color":
-                        return COLOR;
+        companion object {
+            operator fun get(type: String?): Type? {
+                if (type != null) {
+                    when (type) {
+                        "resource" -> return RESOURCE
+                        "color" -> return COLOR
+                    }
                 }
+                return null
             }
-            return null;
         }
     }
 
-    /*package-local*/ Icon() {
-
-    }
-
-    public abstract Type getType();
-
-    protected abstract void writeJSON(JSONObject jsonObject) throws JSONException;
-
-    public abstract Drawable getDrawable(Context context);
-
-    public abstract boolean apply(ImageView imageView);
-
-    public final String toString() {
+    abstract val type: Type
+    @Throws(JSONException::class)
+    protected abstract fun writeJSON(jsonObject: JSONObject?)
+    abstract fun getDrawable(context: Context?): Drawable?
+    abstract fun apply(imageView: ImageView?): Boolean
+    override fun toString(): String {
         try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(TYPE, getType().toString());
-            writeJSON(jsonObject);
-            return jsonObject.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
+            val jsonObject = JSONObject()
+            jsonObject.put(TYPE, type.toString())
+            writeJSON(jsonObject)
+            return jsonObject.toString()
+        } catch (e: JSONException) {
+            e.printStackTrace()
         }
-        return null;
+        return null.toString()
     }
 
-    public static Type getType(JSONObject jsonObject) throws JSONException {
-        return Type.get(jsonObject.getString(TYPE));
+    override fun describeContents(): Int {
+        return 0
     }
 
-    public static int getDrawableId(Context context, String resource) {
-        return context.getResources().getIdentifier(resource, "drawable", context.getPackageName());
-    }
+    companion object {
+        private const val TYPE = "type"
+        @Throws(JSONException::class)
+        fun getType(jsonObject: JSONObject): Type? {
+            return Type[jsonObject.getString(TYPE)]
+        }
 
-    @Override
-    public int describeContents() {
-        return 0;
+        @JvmStatic
+        fun getDrawableId(context: Context, resource: String?): Int {
+            return context.resources.getIdentifier(resource, "drawable", context.packageName)
+        }
     }
 }

@@ -16,49 +16,44 @@
  * You should have received a copy of the GNU General Public License
  * along with MoneyWallet.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.summer.expenses.storage.cache
 
-package com.summer.expenses.storage.cache;
-
-import android.content.Context;
-import android.graphics.Typeface;
-import android.widget.TextView;
-
-import java.util.HashMap;
-import java.util.Map;
+import android.content.Context
+import android.graphics.Typeface
+import android.widget.TextView
+import java.util.*
 
 /**
  * Created by andrea on 30/01/18.
  */
-public class TypefaceCache {
-
-    public static final String ROBOTO_MEDIUM = "Roboto-Medium";
-    public static final String ROBOTO_REGULAR = "Roboto-Regular";
-
-    private static final Map<String, Typeface> mCache = new HashMap<>();
-
-    public static Typeface get(Context context, String name) {
-        synchronized(mCache){
-            if(!mCache.containsKey(name)) {
-                String path = String.format("fonts/%s.ttf", name);
-                Typeface typeface = null;
+object TypefaceCache {
+    const val ROBOTO_MEDIUM = "Roboto-Medium"
+    const val ROBOTO_REGULAR = "Roboto-Regular"
+    private val mCache: MutableMap<String, Typeface?> = HashMap()
+    @JvmStatic
+    operator fun get(context: Context, name: String): Typeface? {
+        synchronized(mCache) {
+            if (!mCache.containsKey(name)) {
+                val path = String.format("fonts/%s.ttf", name)
+                var typeface: Typeface? = null
                 try {
-                    typeface = Typeface.createFromAsset(context.getAssets(), path);
-                } catch (RuntimeException e) {
-                    e.printStackTrace();
+                    typeface = Typeface.createFromAsset(context.assets, path)
+                } catch (e: RuntimeException) {
+                    e.printStackTrace()
                 }
                 if (typeface != null) {
-                    mCache.put(name, typeface);
+                    mCache[name] = typeface
                 }
-                return typeface;
+                return typeface
             }
-            return mCache.get(name);
+            return mCache[name]
         }
     }
 
-    public static void apply(TextView textView, String name) {
-        Typeface typeface = get(textView.getContext(), name);
+    fun apply(textView: TextView, name: String) {
+        val typeface = TypefaceCache[textView.context, name]
         if (typeface != null) {
-            textView.setTypeface(typeface);
+            textView.typeface = typeface
         }
     }
 }
